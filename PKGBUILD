@@ -17,9 +17,9 @@ license=(MIT)
 arch=(x86_64)
 makedepends=(alsa-lib mold nuget pulse-native-provider scons setconf yasm)
 depends=(brotli ca-certificates embree freetype2 graphite libglvnd libspeechd libsquish libtheora libvorbis
-  libwebp libwslay libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2)
+         libwebp libwslay libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2)
 optdepends=('pipewire-alsa: for audio support'
-  'pulse-native-provider: for audio support')
+            'pulse-native-provider: for audio support')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/godotengine/godot/archive/$pkgver-stable.tar.gz")
 b2sums=('fa8aa954974701f5070c06dd0801dadec903159d75ac6a21ec7c85d533dad2c1f42ff21fe40de33fa430c82ba79abeb0d69767eede0112bc4ac02d6e1441b81d')
 
@@ -29,21 +29,11 @@ prepare() {
   # Patch for miniupnpc
   sed -i 's/addr, 16/addr, 16, nullptr, 0/g' modules/upnp/upnp.cpp
 
-  # Patch out SSE4.2 usage to support older CPUs.
-  # sed -i '/# Set x86 CPU instruction sets to use by the compiler/,/^$/d' SConstruct
-
-  # Remove SSE4.2/POPCNT flags on x86_64
-  #sed -i '/env.Append(CCFLAGS=\["-msse4.2", "-mpopcnt"\])/d' SConstruct
-
-  # Remove SSE4.2/POPCNT block on x86_64 (both else and env.Append)
-  sed -i '/else:/,/env.Append(CCFLAGS=\["-msse4\.2", "-mpopcnt"\])/d' SConstruct
-
   cd misc/dist/linux
 
   # Fix the MIME info, ref FS#77810
   sed -i 's,xmlns="https://specifications.freedesktop.org/shared-mime-info-spec",xmlns="http://www.freedesktop.org/standards/shared-mime-info",g' \
     org.godotengine.Godot.xml
-}
 
 build() {
   cd $pkgname-$pkgver-stable
@@ -58,11 +48,11 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -march=core2 -mno-sse4.2 -O0 -pipe -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -march=core2 -mno-sse4.2 -O0 -pipe -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -O0 -g0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -O0 -g0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
-    linker=mold # Use mold to speed up linking/overall build time.
+    linker=mold
     builtin_brotli=no
     builtin_certs=no
     builtin_clipper2=yes
@@ -93,15 +83,15 @@ build() {
     builtin_zlib=no
     builtin_zstd=no
     colored=yes
-    debug_symbols=yes
+    debug_symbols=no
     disable_exceptions=false
     platform=linuxbsd
     production=yes
     pulseaudio=yes
     system_certs_path=/etc/ssl/certs/ca-certificates.crt
     target=editor
-    use_llvm=no  # Enable Clang/LLVM so that lto=thin works.
-    lto=none     # Only compatible with use_llvm as GCC doesn't support it.
+    use_llvm=no
+    lto=none
     werror=no
   )
 
