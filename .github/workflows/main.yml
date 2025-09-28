@@ -1,33 +1,31 @@
 name: Build Godot PKGBUILD
 
 on:
-  workflow_dispatch:  # allows you to trigger manually via GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: archlinux:latest   # 👈 This makes all steps run inside Arch
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Use Arch Linux via Docker
-        uses: docker://archlinux:latest
-
-      - name: Setup build environment
+      - name: Install dependencies
         run: |
           pacman -Syu --noconfirm base-devel clang llvm mold scons git sudo
 
-          # Create a normal user for building (makepkg should not run as root)
+          # Create builder user
           useradd -m builder
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chown -R builder:builder /__w
+          chown -R builder:builder $GITHUB_WORKSPACE
 
       - name: Build package
         run: |
           su builder -c "cd $GITHUB_WORKSPACE && makepkg -s --noconfirm"
 
-      - name: Upload built package
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: godot-pkg
