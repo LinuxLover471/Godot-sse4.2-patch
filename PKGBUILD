@@ -5,6 +5,7 @@
 # Contributor: Matthew Bentley <matthew@mtbentley.us>
 # Contributor: HurricanePootis <hurricanepootis@protonmail.com>
 # Contributor: Toolybird <toolybird at tuta dot io>
+# Contributor: LinuxLover471
 
 pkgbase=godot
 pkgname=(godot)
@@ -14,7 +15,7 @@ pkgdesc='Advanced cross-platform 2D and 3D game engine'
 url='https://godotengine.org/'
 license=(MIT)
 arch=(x86_64)
-makedepends=(alsa-lib nuget pulse-native-provider mold scons setconf yasm)
+makedepends=(alsa-lib clang llvm nuget pulse-native-provider mold scons setconf yasm)
 depends=(brotli ca-certificates embree freetype2 graphite libglvnd libspeechd libsquish libtheora libvorbis
   libwebp libwslay libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2)
 optdepends=('pipewire-alsa: for audio support'
@@ -86,7 +87,7 @@ build() {
     builtin_zlib=no
     builtin_zstd=no
     colored=yes
-    debug_symbols=yes
+    debug_symbols=no
     disable_exceptions=false
     platform=linuxbsd
     production=yes
@@ -94,7 +95,7 @@ build() {
     system_certs_path=/etc/ssl/certs/ca-certificates.crt
     target=editor
     use_llvm=yes # Enable Clang/LLVM so that lto=thin works.
-    lto=thin     # Only compatible with use_llvm as GCC doesn't support it.
+    lto=none     # Only compatible with use_llvm as GCC doesn't support it.
     werror=no
   )
 
