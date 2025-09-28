@@ -15,7 +15,7 @@ jobs:
       - name: Install base-devel and deps
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm --needed base-devel sudo gcc gcc-libs git
+          pacman -S --noconfirm --needed base-devel sudo git
 
       - name: Create build user
         run: |
