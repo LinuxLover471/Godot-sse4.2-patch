@@ -15,7 +15,7 @@ pkgdesc='Advanced cross-platform 2D and 3D game engine'
 url='https://godotengine.org/'
 license=(MIT)
 arch=(x86_64)
-makedepends=(alsa-lib clang llvm nuget pulse-native-provider mold scons setconf yasm)
+makedepends=(alsa-lib gcc gcc-libs nuget pulse-native-provider mold scons setconf yasm)
 depends=(brotli ca-certificates embree freetype2 graphite libglvnd libspeechd libsquish libtheora libvorbis
   libwebp libwslay libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2)
 optdepends=('pipewire-alsa: for audio support'
@@ -94,7 +94,7 @@ build() {
     pulseaudio=yes
     system_certs_path=/etc/ssl/certs/ca-certificates.crt
     target=editor
-    use_llvm=yes # Enable Clang/LLVM so that lto=thin works.
+    use_llvm=no  # Enable Clang/LLVM so that lto=thin works.
     lto=none     # Only compatible with use_llvm as GCC doesn't support it.
     werror=no
   )
