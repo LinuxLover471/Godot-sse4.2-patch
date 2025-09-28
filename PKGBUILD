@@ -52,8 +52,8 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -mnosse4.2 -march=x86-64 -O0 -g0 -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -mnosse4.2 -march=x86-64 -O0 -g0 -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -mno-sse4.2 -march=x86-64 -O0 -g0 -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -mno-sse4.2 -march=x86-64 -O0 -g0 -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
     linker=mold # Use mold to speed up linking/overall build time.
