@@ -33,7 +33,10 @@ prepare() {
   # sed -i '/# Set x86 CPU instruction sets to use by the compiler/,/^$/d' SConstruct
 
   # Remove SSE4.2/POPCNT flags on x86_64
-  sed -i '/env.Append(CCFLAGS=\["-msse4.2", "-mpopcnt"\])/d' SConstruct
+  #sed -i '/env.Append(CCFLAGS=\["-msse4.2", "-mpopcnt"\])/d' SConstruct
+
+  # Remove SSE4.2/POPCNT block on x86_64 (both else and env.Append)
+  sed -i '/else:/,/env.Append(CCFLAGS=\["-msse4\.2", "-mpopcnt"\])/d' SConstruct
 
   cd misc/dist/linux
 
