@@ -14,7 +14,7 @@ pkgdesc='Advanced cross-platform 2D and 3D game engine'
 url='https://godotengine.org/'
 license=(MIT)
 arch=(x86_64)
-makedepends=(alsa-lib nuget pulse-native-provider scons setconf yasm)
+makedepends=(alsa-lib nuget pulse-native-provider mold scons setconf yasm)
 depends=(brotli ca-certificates embree freetype2 graphite libglvnd libspeechd libsquish libtheora libvorbis
   libwebp libwslay libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2)
 optdepends=('pipewire-alsa: for audio support'
@@ -51,8 +51,8 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -mnosse4.2 -march=x86-64 -O0 -g0 -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -mnosse4.2 -march=x86-64 -O0 -g0 -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
     linker=mold # Use mold to speed up linking/overall build time.
