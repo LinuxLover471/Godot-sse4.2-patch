@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: archlinux:latest   # 👈 This makes all steps run inside Arch
+    container: archlinux:latest
 
     steps:
       - name: Checkout repo
@@ -16,17 +16,13 @@ jobs:
         run: |
           pacman -Syu --noconfirm base-devel clang llvm mold scons git sudo
 
-          # Create builder user
-          useradd -m builder
-          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chown -R builder:builder $GITHUB_WORKSPACE
-
-      - name: Build package
+      - name: Build Godot package
         run: |
-          su builder -c "cd $GITHUB_WORKSPACE && makepkg -s --noconfirm"
+          cd $GITHUB_WORKSPACE
+          makepkg -s --noconfirm
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: godot-pkg
-          path: "*.pkg.tar.zst"
+          path: $GITHUB_WORKSPACE/*.pkg.tar.zst
