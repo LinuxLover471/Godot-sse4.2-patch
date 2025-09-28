@@ -30,7 +30,10 @@ prepare() {
   sed -i 's/addr, 16/addr, 16, nullptr, 0/g' modules/upnp/upnp.cpp
 
   # Patch out SSE4.2 usage to support older CPUs.
-  sed -i '/# Set x86 CPU instruction sets to use by the compiler/,/^$/d' SConstruct
+  # sed -i '/# Set x86 CPU instruction sets to use by the compiler/,/^$/d' SConstruct
+
+  # Remove SSE4.2/POPCNT flags on x86_64
+  sed -i '/env.Append(CCFLAGS=\["-msse4.2", "-mpopcnt"\])/d' SConstruct
 
   cd misc/dist/linux
 
@@ -52,8 +55,8 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -march=core2 -O0 -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -march=core2 -O0 -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -march=core2 -mno-sse4.2 -O0 -pipe -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -march=core2 -mno-sse4.2 -O0 -pipe -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
     linker=mold # Use mold to speed up linking/overall build time.
