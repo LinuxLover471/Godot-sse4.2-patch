@@ -26,6 +26,12 @@ jobs:
           useradd -m builder
           chown -R builder:builder $GITHUB_WORKSPACE
 
+      - name: Enable multilib
+        run: |
+          sudo sed -i '/#\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
+          sudo pacman -Syu --noconfirm
+
+
       - name: Build package
         run: |
           sudo -u builder bash -c "cd $GITHUB_WORKSPACE && makepkg -s --noconfirm"
