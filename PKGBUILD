@@ -43,6 +43,7 @@ prepare() {
   # Fix the MIME info, ref FS#77810
   sed -i 's,xmlns="https://specifications.freedesktop.org/shared-mime-info-spec",xmlns="http://www.freedesktop.org/standards/shared-mime-info",g' \
     org.godotengine.Godot.xml
+}
 
 build() {
   cd $pkgname-$pkgver-stable
