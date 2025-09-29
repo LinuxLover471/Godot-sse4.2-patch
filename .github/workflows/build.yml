@@ -15,30 +15,15 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm base-devel git \
-            alsa-lib mold nuget scons setconf yasm \
-            brotli ca-certificates embree freetype2 graphite libglvnd \
-            libspeechd libsquish libtheora libvorbis libwebp libwslay \
-            libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2 \
-            pulse-native-provider
+            alsa-lib mold nuget pulse-native-provider scons setconf yasm \
+#            brotli ca-certificates embree freetype2 graphite libglvnd \
+#            libspeechd libsquish libtheora libvorbis libwebp libwslay \
+#            libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2
 
       - name: Add build user
         run: |
           useradd -m builder
           chown -R builder:builder $GITHUB_WORKSPACE
-          
-      - name: Install 32-bit dependencies
-        run: |
-          sudo sed -i '/#\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
-          sudo pacman -Syu --noconfirm
-          sudo pacman -S --needed --noconfirm \
-            lib32-brotli lib32-ca-certificates lib32-freetype2 lib32-graphite \
-            lib32-libglvnd lib32-libsquish lib32-libtheora lib32-libvorbis \
-            lib32-libwebp lib32-libwslay lib32-libxcursor lib32-libxi \
-            lib32-libxinerama lib32-libxrandr lib32-miniupnpc lib32-openxr \
-            lib32-pcre2 lib32-libspeechd lib32-pipewire-alsa lib32-pulse-native-provider \
-            gcc-multilib alsa-lib mold nuget scons setconf yasm
-
-
 
       - name: Build package
         run: |
