@@ -41,11 +41,9 @@ prepare() {
 # Comment out SSE4.2 flags in SConstruct
 sed -i 's/^\(\s*env\.Append(CCFLAGS=\["-msse4.2"\])\)/# \1/' SConstruct
 
-# Comment out SSE4.2 macros in modules/raycast/SCsub
-sed -i 's/^\(\s*env_thirdparty\.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])\)/# \1/' modules/raycast/SCsub
-
-
-
+# Patch out SSE4.2 macros safely in SCsub
+sed -i '/env_thirdparty\.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])/c\
+    pass' modules/raycast/SCsub
 
   cd misc/dist/linux
 
