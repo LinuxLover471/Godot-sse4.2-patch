@@ -39,11 +39,11 @@ prepare() {
   #sed -i '/else:/,/env.Append(CCFLAGS=\["-msse4\.2", "-mpopcnt"\])/d' SConstruct
 
 # Comment out SSE4.2 flags in SConstruct
-sed -i 's/^\(\s*env\.Append(CCFLAGS=\["-msse4.2"\])\)/# \1/' SConstruct
+#sed -i 's/^\(\s*env\.Append(CCFLAGS=\["-msse4.2"\])\)/# \1/' SConstruct
 
 # Patch out SSE4.2 macros safely in SCsub
-sed -i '/env_thirdparty\.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])/c\
-        pass' modules/raycast/SCsub
+#sed -i '/env_thirdparty\.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])/c\
+#        pass' modules/raycast/SCsub
 
   cd misc/dist/linux
 
@@ -65,11 +65,12 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -O0 -g0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -O0 -g0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -O3 -pipe -march=core2 -msse4.1 -mssse3 -msse3 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -03 -pipe -march=core2 -msse4.1 -mssse3 -msse3 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
     linker=mold
+    bits=32
     builtin_brotli=no
     builtin_certs=no
     builtin_clipper2=yes
@@ -108,7 +109,7 @@ build() {
     system_certs_path=/etc/ssl/certs/ca-certificates.crt
     target=editor
     use_llvm=no
-    lto=none
+    lto=full
     werror=no
   )
 
