@@ -65,8 +65,8 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -O0 -g0 -march=core2 -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -O0 -g0 -march=core2 -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -O0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -O0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
     linker=mold
@@ -100,7 +100,7 @@ build() {
     builtin_zlib=no
     builtin_zstd=no
     colored=yes
-    debug_symbols=no
+    debug_symbols=yes
     disable_exceptions=false
     platform=linuxbsd
     production=yes
