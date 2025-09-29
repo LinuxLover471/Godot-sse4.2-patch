@@ -1,0 +1,33 @@
+name: Build Godot PKGBUILD
+
+on:
+  workflow_dispatch: # run manually
+  push:              # also runs on push
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          pacman -Syu --noconfirm --needed base-devel git sudo
+
+      - name: Build package
+        run: |
+          # makepkg refuses to run as root, so add a build user
+          useradd -m builder
+          chown -R builder:builder .
+          sudo -u builder makepkg -s --noconfirm --cleanbuild --syncdeps
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-pkg
+          path: ./*.pkg.tar.zst
