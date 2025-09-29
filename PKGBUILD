@@ -58,8 +58,8 @@ build() {
 
   _args=(
     -j$(nproc --all)
-    cflags="$CFLAGS -O0 -g0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
-    cxxflags="$CXXFLAGS -O0 -g0 -march=core2 -mno-sse4.2 -fPIC -Wl,-z,relro,-z,now -w"
+    cflags="$CFLAGS -O0 -g0 -march=core2 -fPIC -Wl,-z,relro,-z,now -w"
+    cxxflags="$CXXFLAGS -O0 -g0 -march=core2 -fPIC -Wl,-z,relro,-z,now -w"
     linkflags="$LDFLAGS"
     arch=$CARCH
     linker=mold
