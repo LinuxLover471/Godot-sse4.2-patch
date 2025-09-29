@@ -43,7 +43,7 @@ sed -i 's/^\(\s*env\.Append(CCFLAGS=\["-msse4.2"\])\)/# \1/' SConstruct
 
 # Patch out SSE4.2 macros safely in SCsub
 sed -i '/env_thirdparty\.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])/c\
-    pass' modules/raycast/SCsub
+        pass' modules/raycast/SCsub
 
   cd misc/dist/linux
 
