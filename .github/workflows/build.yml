@@ -1,10 +1,7 @@
 name: Build Godot PKGBUILD
 
 on:
-  workflow_dispatch: # run manually
-  push:              # also runs on push
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,19 +12,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install build tools
+      - name: Install dependencies
         run: |
-          pacman -Syu --noconfirm --needed base-devel git sudo
+          pacman -Syu --noconfirm base-devel git \
+            alsa-lib mold nuget scons setconf yasm \
+            brotli ca-certificates embree freetype2 graphite libglvnd \
+            libspeechd libsquish libtheora libvorbis libwebp libwslay \
+            libxcursor libxi libxinerama libxrandr miniupnpc openxr pcre2 \
+            pulse-native-provider
+
+      - name: Add build user
+        run: |
+          useradd -m builder
+          chown -R builder:builder $GITHUB_WORKSPACE
 
       - name: Build package
         run: |
-          # makepkg refuses to run as root, so add a build user
-          useradd -m builder
-          chown -R builder:builder .
-          sudo -u builder makepkg -s --noconfirm --cleanbuild --syncdeps
+          sudo -u builder bash -c "cd $GITHUB_WORKSPACE && makepkg -s --noconfirm"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: godot-pkg
-          path: ./*.pkg.tar.zst
+          path: "*.pkg.tar.zst"
