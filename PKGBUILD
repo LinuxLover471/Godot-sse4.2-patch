@@ -38,15 +38,26 @@ prepare() {
   # Remove SSE4.2/POPCNT block on x86_64 (both else and env.Append)
   #sed -i '/else:/,/env.Append(CCFLAGS=\["-msse4\.2", "-mpopcnt"\])/d' SConstruct
 
-  # Patch out SSE4.2 CPU requirements
-sed -i '/# On 64-bit x86, enable SSE 4.2/,/env.Append(CCFLAGS=\["-msse4.2"\])/c\
-# SSE4.2 disabled for older CPUs\n\
-pass' SConstruct
+#   # Patch out SSE4.2 CPU requirements
+# sed -i '/# On 64-bit x86, enable SSE 4.2/,/env.Append(CCFLAGS=\["-msse4.2"\])/c\
+# # SSE4.2 disabled for older CPUs\n\
+# pass' SConstruct
 
-# Remove SSE4.2/related macro definitions in third-party modules (e.g., Embree)
+# # Remove SSE4.2/related macro definitions in third-party modules (e.g., Embree)
+# sed -i '/env_thirdparty.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])/c\
+# # SSE4.2 macros disabled for older CPUs\n\
+# pass' modules/raycast/SCsub
+
+# Patch out SSE4.2 CPU requirement
+sed -i '/# On 64-bit x86, enable SSE 4.2/,/env.Append(CCFLAGS=\["-msse4.2"\])/c\
+    # SSE4.2 disabled for older CPUs\n\
+    pass' SConstruct
+
+# Remove SSE4.2 macro definitions in third-party modules
 sed -i '/env_thirdparty.Append(CPPDEFINES=\["__SSE3__", "__SSSE3__", "__SSE4_1__", "__SSE4_2__"\])/c\
-# SSE4.2 macros disabled for older CPUs\n\
-pass' modules/raycast/SCsub
+    # SSE4.2 macros disabled for older CPUs\n\
+    pass' modules/raycast/SCsub
+
 
 
   cd misc/dist/linux
