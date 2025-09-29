@@ -152,9 +152,9 @@ arch=(i686 x86_64)  # optional; include i686 to indicate 32-bit support
 makedepends=(alsa-lib mold nuget pulse-native-provider scons setconf yasm gcc-multilib)
 depends=(lib32-brotli lib32-ca-certificates lib32-freetype2 lib32-graphite lib32-libglvnd lib32-libsquish
          lib32-libtheora lib32-libvorbis lib32-libwebp lib32-libwslay lib32-libxcursor lib32-libxi
-         lib32-libxinerama lib32-libxrandr lib32-miniupnpc lib32-openxr lib32-pcre2 lib32-libspeechd
-         pipewire-alsa: for audio support
-         pulse-native-provider: for audio support)
+         lib32-libxinerama lib32-libxrandr lib32-miniupnpc lib32-openxr lib32-pcre2 lib32-libspeechd)
+optdepends=('pipewire-alsa: for audio support'
+             'pulse-native-provider: for audio support')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/godotengine/godot/archive/$pkgver-stable.tar.gz")
 b2sums=('fa8aa954974701f5070c06dd0801dadec903159d75ac6a21ec7c85d533dad2c1f42ff21fe40de33fa430c82ba79abeb0d69767eede0112bc4ac02d6e1441b81d')
 
