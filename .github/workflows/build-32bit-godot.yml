@@ -16,8 +16,21 @@ jobs:
         run: |
           set -euxo pipefail
           cat /etc/pacman.conf
-          # Uncomment the multilib section in pacman.conf
-          sed -i '/#\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
+          # add multilib repo if missing
+          if ! grep -q '^\[multilib\]' /etc/pacman.conf; then
+            cat >> /etc/pacman.conf <<'EOF'
+          
+          [multilib]
+          Include = /etc/pacman.d/mirrorlist
+          EOF
+            echo "multilib added to /etc/pacman.conf"
+          else
+            echo "multilib already present"
+          fi
+          
+          # initialize keyring if needed (harmless if already done)
+          pacman-key --init || true
+          pacman-key --populate archlinux || true
           cat /etc/pacman.conf
           # Full system update (noninteractive)
           pacman -Syu --noconfirm
