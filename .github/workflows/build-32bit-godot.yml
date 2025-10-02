@@ -15,8 +15,10 @@ jobs:
       - name: Enable multilib and refresh mirrors
         run: |
           set -euxo pipefail
+          cat /etc/pacman.conf
           # Uncomment the multilib section in pacman.conf
           sed -i '/#\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
+          cat /etc/pacman.conf
           # Full system update (noninteractive)
           pacman -Syu --noconfirm
 
