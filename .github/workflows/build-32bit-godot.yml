@@ -16,9 +16,9 @@ jobs:
         run: |
           set -euxo pipefail
           # Uncomment the multilib section in pacman.conf
-          sudo sed -i '/#\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
+          sed -i '/#\[multilib\]/,/Include/s/^#//' /etc/pacman.conf
           # Full system update (noninteractive)
-          sudo pacman -Syu --noconfirm
+          pacman -Syu --noconfirm
 
       - name: Install available build & runtime dependencies (skip missing)
         run: |
@@ -37,22 +37,22 @@ jobs:
           for pkg in "${PACKAGES[@]}"; do
             echo "INSTALLING: $pkg"
             # try to install, but if not available continue
-            sudo pacman -S --noconfirm --needed "$pkg" || echo "package $pkg not found — skipping"
+            pacman -S --noconfirm --needed "$pkg" || echo "package $pkg not found — skipping"
           done
 
       - name: Create build user and set permissions
         run: |
           set -euxo pipefail
-          sudo useradd -m builder || true
-          sudo chown -R builder:builder $GITHUB_WORKSPACE
+          useradd -m builder || true
+          chown -R builder:builder $GITHUB_WORKSPACE
 
       - name: Build package as builder (no -s)
         run: |
           set -euxo pipefail
           # Run makepkg without -s (we installed known deps above).
           # run as 'builder' user so package metadata and file ownership are correct.
-          sudo -u builder bash -lc "cd $GITHUB_WORKSPACE && makepkg --noconfirm"
-
+          su - builder -c "cd $GITHUB_WORKSPACE && makepkg --noconfirm"
+          
       - name: Upload built package
         uses: actions/upload-artifact@v4
         with:
