@@ -1,7 +1,5 @@
 name: Build Godot (32-bit) PKGBUILD
-
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   build:
@@ -15,49 +13,35 @@ jobs:
       - name: Enable multilib and refresh mirrors
         run: |
           set -euxo pipefail
-          cat /etc/pacman.conf
-          # add multilib repo if missing
           if ! grep -q '^\[multilib\]' /etc/pacman.conf; then
             cat >> /etc/pacman.conf <<'EOF'
-          
+
           [multilib]
           Include = /etc/pacman.d/mirrorlist
           EOF
-            echo "multilib added to /etc/pacman.conf"
-          else
-            echo "multilib already present"
           fi
-          
-          # initialize keyring if needed (harmless if already done)
           pacman-key --init || true
           pacman-key --populate archlinux || true
-          cat /etc/pacman.conf
-          # Full system update (noninteractive)
           pacman -Syu --noconfirm
 
-      - name: Install available build & runtime dependencies (skip missing)
+      - name: Install build & runtime dependencies (best effort)
         run: |
           set -euxo pipefail
-          PACKAGES=(
-            base-devel git
-            # build tools
-            gcc-multilib scons yasm mold nuget setconf
-            # common build/runtime libs (32-bit) — will skip unavailable ones
-            lib32-glibc lib32-fontconfig lib32-libx11 lib32-libxrandr lib32-libxinerama
-            lib32-libxcursor lib32-libxi lib32-libxext lib32-libxfixes lib32-wayland
-            lib32-libxkbcommon lib32-alsa-lib lib32-pulseaudio lib32-glib2
-            lib32-libxrandr lib32-libxinerama lib32-libxcursor lib32-libxi lib32-libxext
-            # optional: add more if your PKGBUILD actually requires them and they exist
-            )
-          for pkg in "${PACKAGES[@]}"; do
-            echo "INSTALLING: $pkg"
-            # try to install, but if not available continue
-            pacman -S --noconfirm --needed "$pkg" || echo "package $pkg not found — skipping"
+          # core build deps (ensure these are present)
+          pacman -S --noconfirm --needed base-devel git gcc-multilib scons yasm mold nuget setconf
+          # install a broad set of lib32 runtime deps (pacman will skip ones not found)
+          PKG32=(
+            lib32-glibc lib32-ca-certificates lib32-fontconfig lib32-libx11 lib32-libxrandr
+            lib32-libxinerama lib32-libxcursor lib32-libxi lib32-libxext lib32-libxfixes
+            lib32-wayland lib32-libxkbcommon lib32-alsa-lib lib32-pulseaudio lib32-glib2
+            lib32-graphite lib32-libglvnd lib32-libsquish lib32-libtheora lib32-libwebp
+            lib32-libwslay lib32-miniupnpc lib32-openxr lib32-pcre2 lib32-libspeechd
+            pulse-native-provider
+          )
+          for p in "${PKG32[@]}"; do
+            echo "attempting install: $p"
+            pacman -S --noconfirm --needed "$p" || echo "package $p not found/available, skipping"
           done
-          pacman -S --noconfirm --needed lib32-ca-certificates lib32-graphite lib32-libglvnd lib32-libsquish \
-          lib32-libtheora lib32-libwebp lib32-libwslay lib32-miniupnpc \
-          lib32-openxr lib32-libspeechd pulse-native-provider
-
 
       - name: Create build user and set permissions
         run: |
@@ -68,10 +52,8 @@ jobs:
       - name: Build package as builder (no -s)
         run: |
           set -euxo pipefail
-          # Run makepkg without -s (we installed known deps above).
-          # run as 'builder' user so package metadata and file ownership are correct.
           su - builder -c "cd $GITHUB_WORKSPACE && makepkg --noconfirm"
-          
+
       - name: Upload built package
         uses: actions/upload-artifact@v4
         with:
