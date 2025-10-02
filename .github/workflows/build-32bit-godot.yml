@@ -54,6 +54,10 @@ jobs:
             # try to install, but if not available continue
             pacman -S --noconfirm --needed "$pkg" || echo "package $pkg not found — skipping"
           done
+          pacman -S --noconfirm --needed lib32-ca-certificates lib32-graphite lib32-libglvnd lib32-libsquish \
+          lib32-libtheora lib32-libwebp lib32-libwslay lib32-miniupnpc \
+          lib32-openxr lib32-libspeechd pulse-native-provider
+
 
       - name: Create build user and set permissions
         run: |
@@ -66,7 +70,7 @@ jobs:
           set -euxo pipefail
           # Run makepkg without -s (we installed known deps above).
           # run as 'builder' user so package metadata and file ownership are correct.
-          su - builder -c "cd $GITHUB_WORKSPACE && makepkg -s --noconfirm"
+          su - builder -c "cd $GITHUB_WORKSPACE && makepkg --noconfirm"
           
       - name: Upload built package
         uses: actions/upload-artifact@v4
