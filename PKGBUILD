@@ -6,7 +6,6 @@
 # Contributor: Matthew Bentley <matthew@mtbentley.us>
 # Contributor: HurricanePootis <hurricanepootis@protonmail.com>
 # Contributor: Toolybird <toolybird at tuta dot io>
-# Contributor: LinuxLover471
 
 pkgbase=godot
 pkgname=(godot)
